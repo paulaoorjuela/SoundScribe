@@ -1,5 +1,9 @@
-package com.paula.soundscribe.Service;
+package com.paula.soundscribe.service;
 
-public class UserService {
+import com.paula.soundscribe.model.User;
+
+public interface UserService {
+
+    public User findUserById(Long userId) throws Exception;
 
 }
