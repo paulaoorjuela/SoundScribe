@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,10 +28,11 @@ public class PublicationController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/user/{userId}")
-    public Publication createPublication(@RequestBody Publication publication, @PathVariable Long userId)
-            throws Exception {
-        User user = userService.findUserById(userId);
+    @PostMapping()
+    public Publication createPublication(@RequestBody Publication publication, 
+                @RequestHeader("Authorization") String jwt)throws Exception {
+
+        User user = userService.findUserByJwt(jwt);
         Publication createdPublication = publicationService.createPublication(publication, user);
         return createdPublication;
     }
@@ -55,9 +57,9 @@ public class PublicationController {
         return "Publication deleted";
     }
 
-    @PutMapping("/{id}/like/user/{userId}")
-    public Publication likePublication(@PathVariable Long userId, @PathVariable Long id) throws Exception {
-        User user = userService.findUserById(userId);
+    @PutMapping("/{id}/like")
+    public Publication likePublication(@RequestHeader("Authorization") String jwt, @PathVariable Long id) throws Exception {
+        User user = userService.findUserByJwt(jwt);
 
         Publication updatedPublication = publicationService.publicationLikes(id, user);
         return updatedPublication;

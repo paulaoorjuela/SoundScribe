@@ -1,9 +1,11 @@
 package com.paula.soundscribe.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,6 +66,7 @@ public class AuthenticationController {
         return res;
     }
 
+    @PostMapping("/signin")
     public AuthResponse signinHandler(@RequestBody LoginRequest loginRequest){
 
         String username = loginRequest.getEmail();
@@ -76,13 +79,21 @@ public class AuthenticationController {
 
         AuthResponse res = new AuthResponse();
         res.setJwt(token);
-        res.setMessage("Succesfull signup");
+        res.setMessage("Succesfull signin");
 
         return res;
     }
 
     private Authentication authenticate(String username, String password) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'authenticate'");
+
+        UserDetails userDetails = costumeUserDetails.loadUserByUsername(username);
+        if(userDetails == null) {
+            throw new BadCredentialsException("user not found");
+        }
+        if(!passwordEncoder.matches(password, userDetails.getPassword())){
+            throw new BadCredentialsException("invalid password");
+        }
+        
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }
