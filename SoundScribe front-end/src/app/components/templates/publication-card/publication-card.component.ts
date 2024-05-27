@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import {MatIconModule} from '@angular/material/icon';
+import { UpdatePublicationFormComponent } from '../update-publication-form/update-publication-form.component';
 
 @Component({
   selector: 'app-publication-card',
@@ -12,4 +14,11 @@ import {MatIconModule} from '@angular/material/icon';
 })
 export class PublicationCardComponent {
 
+  constructor(public modal: MatDialog){
+
+  }
+
+  openEditPublicationForm(){
+    this.modal.open(UpdatePublicationFormComponent)
+  }
 }
